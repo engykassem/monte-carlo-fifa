@@ -1,14 +1,13 @@
-name: Docker Build
+name: Docker Publish
 
 on:
   push:
     branches:
       - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   docker-build:
@@ -18,5 +17,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set image name
+        run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}:latest" >> $GITHUB_ENV
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
       - name: Build Docker image
-        run: docker build -t fifa-tournament-predictor .
+        run: docker build -t $IMAGE_NAME .
+
+      - name: Push Docker image to GHCR
+        run: docker push $IMAGE_NAME

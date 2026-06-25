@@ -6,6 +6,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
+COPY fifa_tournament_predictor.py .
 
 CMD ["python", "fifa_tournament_predictor.py"]
